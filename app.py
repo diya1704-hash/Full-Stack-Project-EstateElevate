@@ -44,28 +44,24 @@ def get_base64_image(file):
 
 @app.route('/')
 def index():
-    """Fetches projects/clients and applies one-time database upgrade."""
     conn = mysql.get_conn()
     cur = conn.cursor()
-
-    # --- TEMPORARY DATABASE AUTO-FIX ---
-    # This runs every time you visit the home page to ensure columns are LONGTEXT
+    
+    # Trigger the upgrade
     try:
         cur.execute("ALTER TABLE projects MODIFY image_path LONGTEXT")
         cur.execute("ALTER TABLE clients MODIFY image_path LONGTEXT")
-        print("Database upgraded: image_path is now LONGTEXT")
-    except Exception as e:
-        # If it's already LONGTEXT, it might skip this, which is fine
-        print(f"DB Upgrade Note: {e}")
+    except:
+        pass
 
-    # Fetch data for display
     cur.execute("SELECT * FROM projects")
-    projects = cur.fetchall()
+    projects = cur.fetchall() # Get data first
+    
     cur.execute("SELECT * FROM clients")
-    clients = cur.fetchall()
+    clients = cur.fetchall() # Get data first
     
     cur.close()
-    conn.close()
+    conn.close() # Close last
     return render_template('index.html', projects=projects, clients=clients)
 
 @app.route('/admin')

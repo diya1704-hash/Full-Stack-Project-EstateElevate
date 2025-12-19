@@ -49,12 +49,11 @@
         <div class="row g-4">
             {% if projects %} {% for p in projects %}
             <div class="col-md-4">
-                <div class="card project-card border-0 h-100 shadow-sm">
-                    <img src="{{ p['image_path'] }}" class="card-img-top rounded-4 shadow-sm" alt="Project Image" style="height: 250px; object-fit: cover;">
-                    <div class="card-body text-center">
-                        <h5 class="fw-bold">{{ p['name'] }}</h5>
-                        <p class="text-muted small">{{ p['description'] }}</p>
-                        <button class="btn btn-outline-primary btn-sm px-4">READ MORE</button>
+                <div class="card h-100 shadow-sm">
+                    <img src="{{ p['image_path'] }}" class="card-img-top" alt="Project Image" style="height: 200px; object-fit: cover;">
+                    <div class="card-body">
+                        <h5 class="card-title">{{ p['name'] }}</h5>
+                        <p class="card-text text-muted">{{ p['description'] }}</p>
                     </div>
                 </div>
             </div>
@@ -71,11 +70,11 @@
             <h2 class="text-center fw-bold mb-5 section-title">Happy Clients</h2>
             <div class="row text-center">
                 {% if clients %} {% for c in clients %}
-                <div class="col-md-4 mb-4">
-                    <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-                        <img src="{{ c['image_path'] }}" class="rounded-circle mb-3 shadow-sm" width="80" height="80" style="object-fit: cover;">
-                        <p class="fst-italic text-muted">"{{ c['description'] }}"</p>
-                        <h6 class="fw-bold mb-0">{{ c['name'] }}</h6>
+                <div class="col-md-4 text-center">
+                    <div class="p-4 bg-white rounded shadow-sm">
+                        <img src="{{ c['image_path'] }}" class="rounded-circle mb-3" width="80" height="80" style="object-fit: cover;">
+                        <p class="fst-italic">"{{ c['description'] }}"</p>
+                        <h6 class="fw-bold">{{ c['name'] }}</h6>
                         <small class="text-primary">{{ c['designation'] }}</small>
                     </div>
                 </div>
