@@ -1,4 +1,4 @@
 flask
-flask-mysql
 pymysql
+Pillow
 gunicorn
