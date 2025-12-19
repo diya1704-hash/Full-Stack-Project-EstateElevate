@@ -49,8 +49,8 @@
         <div class="row g-4">
             {% for p in projects %}
             <div class="col-md-4">
-                <div class="card project-card border-0">
-                    <img src="{{ p['image_path'] }}" class="card-img-top rounded-4 shadow-sm" alt="Project Image">
+                <div class="card project-card border-0 h-100">
+                    <img src="{{ p['image_path'] }}" class="card-img-top rounded-4 shadow-sm" alt="Project Image" style="height: 250px; object-fit: cover;">
                     <div class="card-body text-center">
                         <h5 class="fw-bold">{{ p['name'] }}</h5>
                         <p class="text-muted small">{{ p['description'] }}</p>
@@ -69,7 +69,7 @@
                 {% for c in clients %}
                 <div class="col-md-4 mb-4">
                     <div class="p-4 bg-white rounded-4 shadow-sm h-100">
-                        <img src="{{ c['image_path'] }}" class="rounded-circle mb-3" width="80" height="80" style="object-fit: cover;">
+                        <img src="{{ c['image_path'] }}" class="rounded-circle mb-3 shadow-sm" width="80" height="80" style="object-fit: cover;">
                         <p class="fst-italic text-muted">"{{ c['description'] }}"</p>
                         <h6 class="fw-bold mb-0">{{ c['name'] }}</h6>
                         <small class="text-primary">{{ c['designation'] }}</small>
@@ -79,6 +79,20 @@
             </div>
         </div>
     </section>
+
+    <footer class="bg-dark text-white py-5">
+        <div class="container text-center">
+            <h4 class="fw-bold mb-3">Subscribe to our Newsletter</h4>
+            <div class="row justify-content-center">
+                <div class="col-md-6">
+                    <form action="/subscribe" method="POST" class="d-flex gap-2">
+                        <input type="email" name="email" class="form-control" placeholder="Enter your email" required>
+                        <button class="btn btn-primary px-4">Subscribe</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </footer>
 </body>
 
 </html>

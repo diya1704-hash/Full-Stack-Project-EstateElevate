@@ -31,6 +31,14 @@
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
             margin-bottom: 2rem;
         }
+        /* Added preview styling */
+        
+        .img-preview {
+            width: 50px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 4px;
+        }
     </style>
 </head>
 
@@ -63,24 +71,77 @@
             <div class="col-lg-5">
                 <div class="form-box">
                     <h5 class="fw-bold mb-4">Add Project</h5>
-                    <form action="/admin/add_project" method="POST">
+                    <form action="/admin/add_project" method="POST" enctype="multipart/form-data">
                         <input type="text" name="name" class="form-control mb-3" placeholder="Project Name" required>
                         <textarea name="desc" class="form-control mb-3" placeholder="Project Description"></textarea>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Upload Project Image</label>
+                            <input type="file" name="image_file" class="form-control" accept="image/*" required>
+                        </div>
                         <button class="btn btn-primary w-100">Save Project</button>
                     </form>
                 </div>
+
                 <div class="form-box">
                     <h5 class="fw-bold mb-4">Add Happy Client</h5>
-                    <form action="/admin/add_client" method="POST">
+                    <form action="/admin/add_client" method="POST" enctype="multipart/form-data">
                         <input type="text" name="name" class="form-control mb-3" placeholder="Client Name" required>
                         <input type="text" name="designation" class="form-control mb-3" placeholder="Location/Job Title">
                         <textarea name="desc" class="form-control mb-3" placeholder="Review Text"></textarea>
+                        <div class="mb-3">
+                            <label class="form-label small text-muted">Upload Client Photo</label>
+                            <input type="file" name="image_file" class="form-control" accept="image/*" required>
+                        </div>
                         <button class="btn btn-dark w-100">Add Testimonial</button>
                     </form>
                 </div>
             </div>
 
             <div class="col-lg-7">
+                <div class="form-box mb-4">
+                    <h5 class="fw-bold mb-4">Current Projects</h5>
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Image</th>
+                                <th>Name</th>
+                                <th>Description</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for p in projects %}
+                            <tr>
+                                <td><img src="{{ p['image_path'] }}" class="img-preview"></td>
+                                <td>{{ p['name'] }}</td>
+                                <td class="small text-muted text-truncate" style="max-width: 200px;">{{ p['description'] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="form-box mb-4">
+                    <h5 class="fw-bold mb-4">Happy Clients</h5>
+                    <table class="table align-middle">
+                        <thead>
+                            <tr>
+                                <th>Photo</th>
+                                <th>Name</th>
+                                <th>Designation</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for c in clients %}
+                            <tr>
+                                <td><img src="{{ c['image_path'] }}" class="img-preview rounded-circle"></td>
+                                <td>{{ c['name'] }}</td>
+                                <td class="small text-muted">{{ c['designation'] }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+
                 <div class="form-box">
                     <h5 class="fw-bold mb-4">Recent Inquiries</h5>
                     <table class="table">
