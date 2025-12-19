@@ -112,5 +112,36 @@ def index():
     conn.close()
     return render_template('index.html', projects=projects, clients=clients)
 
+# ... (all your existing code above) ...
+
+# This is for Vercel to find the app instance easily
+# ... (Previous code: imports, MySQLWrapper, save_and_crop, index) ...
+
+@app.route('/submit_contact', methods=['POST'])
+def submit_contact():
+    conn = mysql.connection
+    cur = conn.cursor()
+    cur.execute(
+        "INSERT INTO contact_submissions (name, email, phone, city) VALUES (%s, %s, %s, %s)",
+        (request.form['name'], request.form['email'], request.form['phone'], request.form['city'])
+    )
+    conn.close()
+    flash("Consultation request sent successfully!")
+    return redirect(url_for('index'))
+
+@app.route('/subscribe', methods=['POST'])
+def subscribe():
+    conn = mysql.connection
+    cur = conn.cursor()
+    try:
+        cur.execute("INSERT INTO subscribers (email) VALUES (%s)", (request.form['email'],))
+    except pymysql.err.IntegrityError:
+        pass  # Email already exists
+    conn.close()
+    flash("Subscribed to newsletter!")
+    return redirect(url_for('index'))
+
+app = app # Required for Vercel
+
 if __name__ == '__main__':
     app.run(debug=True)
