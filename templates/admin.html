@@ -62,6 +62,8 @@
             padding: 0.8rem 1rem;
             border-radius: 10px;
             margin-bottom: 0.5rem;
+            text-decoration: none;
+            display: block;
         }
         
         .nav-link.active {
@@ -82,13 +84,10 @@
 </head>
 
 <body>
-
     <div class="sidebar">
         <h4 class="fw-bold text-primary mb-5">AdminPanel</h4>
         <nav class="nav flex-column">
             <a class="nav-link active" href="#">Dashboard</a>
-            <a class="nav-link" href="#projects">Manage Projects</a>
-            <a class="nav-link" href="#leads">View Leads</a>
             <a class="nav-link text-danger mt-5" href="/">Exit to Site</a>
         </nav>
     </div>
@@ -118,22 +117,19 @@
             <div class="col-lg-5">
                 <div class="form-box">
                     <h5 class="fw-bold mb-4">Add Project</h5>
-                    <form action="/admin/add_project" method="POST" enctype="multipart/form-data">
+                    <form action="/admin/add_project" method="POST">
                         <input type="text" name="name" class="form-control mb-3" placeholder="Project Name" required>
                         <textarea name="desc" class="form-control mb-3" placeholder="Project Description"></textarea>
-                        <label class="small text-muted mb-2">Image (Auto-crops to 450x350)</label>
-                        <input type="file" name="image" class="form-control mb-4" required>
-                        <button class="btn btn-primary w-100 fw-bold">Upload Project</button>
+                        <button class="btn btn-primary w-100 fw-bold">Save Project</button>
                     </form>
                 </div>
 
                 <div class="form-box">
                     <h5 class="fw-bold mb-4">Add Happy Client</h5>
-                    <form action="/admin/add_client" method="POST" enctype="multipart/form-data">
+                    <form action="/admin/add_client" method="POST">
                         <input type="text" name="name" class="form-control mb-3" placeholder="Client Name" required>
                         <input type="text" name="designation" class="form-control mb-3" placeholder="Job Title / Location">
                         <textarea name="desc" class="form-control mb-3" placeholder="Their Review Text"></textarea>
-                        <input type="file" name="image" class="form-control mb-4" required>
                         <button class="btn btn-dark w-100 fw-bold">Add Testimonial</button>
                     </form>
                 </div>
@@ -154,9 +150,9 @@
                             <tbody>
                                 {% for l in leads %}
                                 <tr>
-                                    <td class="fw-bold">{{ l[1] }}</td>
-                                    <td>{{ l[5] }}</td>
-                                    <td>{{ l[3] }}</td>
+                                    <td class="fw-bold">{{ l['name'] }}</td>
+                                    <td>{{ l['city'] }}</td>
+                                    <td>{{ l['phone'] }}</td>
                                 </tr>
                                 {% endfor %}
                             </tbody>
@@ -168,13 +164,12 @@
                     <h5 class="fw-bold mb-4">Subscribed Emails</h5>
                     <div>
                         {% for s in subs %}
-                        <span class="badge-sub">{{ s[1] }}</span> {% endfor %}
+                        <span class="badge-sub">{{ s['email'] }}</span> {% endfor %}
                     </div>
                 </div>
             </div>
         </div>
     </div>
-
 </body>
 
 </html>
