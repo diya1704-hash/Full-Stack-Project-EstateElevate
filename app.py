@@ -13,8 +13,7 @@ MYSQL_DB = 'defaultdb'
 MYSQL_PORT = 16633
 
 class MySQLWrapper:
-    @property
-    def connection(self):
+    def get_conn(self):
         basedir = os.path.abspath(os.path.dirname(__file__))
         return pymysql.connect(
             host=MYSQL_HOST,
@@ -23,7 +22,8 @@ class MySQLWrapper:
             database=MYSQL_DB,
             port=MYSQL_PORT,
             ssl={'ca': os.path.join(basedir, "ca.pem")},
-            autocommit=True
+            autocommit=True,
+            cursorclass=pymysql.cursors.DictCursor # This makes data easier to handle
         )
 
 mysql = MySQLWrapper()
