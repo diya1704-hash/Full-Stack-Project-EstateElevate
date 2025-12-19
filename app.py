@@ -8,11 +8,25 @@ app = Flask(__name__)
 app.secret_key = 'flipr_ultra_secret'
 
 # Database Config (Update with your credentials)
-app.config['MYSQL_HOST'] = 'localhost'
-app.config['MYSQL_USER'] = 'root'
-app.config['MYSQL_PASSWORD'] = 'root'
-app.config['MYSQL_DB'] = 'flipr_db'
-app.config['UPLOAD_FOLDER'] = 'static/uploads'
+# Use environment variables for production
+# Updated Database Config in app.py
+# Database Configuration for Aiven
+app.config['MYSQL_HOST'] = 'mysql-608471f-diyaramawat17-b50b.k.aivencloud.com'
+app.config['MYSQL_USER'] = 'avnadmin'
+import os
+# Use 'AVNS_...' as a backup for local testing, but look for the environment variable first
+app.config['MYSQL_PASSWORD'] = os.environ.get('MYSQL_PASSWORD', 'AVNS_T820t72lxjaujRHWlrc')
+app.config['MYSQL_DB'] = 'defaultdb'
+app.config['MYSQL_PORT'] = 16633
+
+# This is the "Secret Sauce" for Aiven - SSL is REQUIRED
+import os
+basedir = os.path.abspath(os.path.dirname(__file__))
+app.config['MYSQL_CUSTOM_OPTIONS'] = {
+    "ssl": {
+        "ca": os.path.join(basedir, "ca.pem")
+    }
+}
 
 mysql = MySQL(app)
 

@@ -1,6 +1,3 @@
-CREATE DATABASE flipr_db;
-USE flipr_db;
-
 CREATE TABLE projects (
     id INT AUTO_INCREMENT PRIMARY KEY,
     name VARCHAR(255) NOT NULL,
