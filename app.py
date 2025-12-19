@@ -22,19 +22,35 @@ class MySQLWrapper:
             database=MYSQL_DB,
             port=MYSQL_PORT,
             ssl={'ca': os.path.join(basedir, "ca.pem")},
-            autocommit=True
+            autocommit=True,
+            # This ensures data is returned as a dictionary for HTML compatibility
+            cursorclass=pymysql.cursors.DictCursor 
         )
 
 mysql = MySQLWrapper()
 
+@app.route('/')
+def index():
+    conn = mysql.get_conn()
+    cur = conn.cursor()
+    cur.execute("SELECT * FROM projects")
+    projects = cur.fetchall()
+    cur.execute("SELECT * FROM clients")
+    clients = cur.fetchall()
+    cur.close()
+    conn.close()
+    return render_template('index.html', projects=projects, clients=clients)
+
 @app.route('/admin')
 def admin():
-    conn = mysql.get_conn() # Fixed: Use get_conn()
+    conn = mysql.get_conn()
     cur = conn.cursor()
-    cur.execute("SELECT COUNT(*) FROM contact_submissions")
-    lead_count = cur.fetchone()[0]
-    cur.execute("SELECT COUNT(*) FROM subscribers")
-    sub_count = cur.fetchone()[0]
+    # Fetch counts using dictionary keys
+    cur.execute("SELECT COUNT(*) as count FROM contact_submissions")
+    lead_count = cur.fetchone()['count']
+    cur.execute("SELECT COUNT(*) as count FROM subscribers")
+    sub_count = cur.fetchone()['count']
+    
     cur.execute("SELECT * FROM contact_submissions ORDER BY submitted_at DESC")
     leads = cur.fetchall()
     cur.execute("SELECT * FROM subscribers")
@@ -51,8 +67,9 @@ def admin():
 
 @app.route('/admin/add_project', methods=['POST'])
 def add_project():
+    # External URL to bypass Vercel's read-only filesystem
     img_path = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=450&h=350&fit=crop"
-    conn = mysql.get_conn() # Fixed: Use get_conn()
+    conn = mysql.get_conn()
     cur = conn.cursor()
     cur.execute("INSERT INTO projects (name, description, image_path) VALUES (%s, %s, %s)", 
                 (request.form['name'], request.form['desc'], img_path))
@@ -61,8 +78,9 @@ def add_project():
 
 @app.route('/admin/add_client', methods=['POST'])
 def add_client():
+    # External URL for client testimonials
     img_path = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80&h=80&fit=crop"
-    conn = mysql.get_conn() # Fixed: Use get_conn()
+    conn = mysql.get_conn()
     cur = conn.cursor()
     cur.execute("INSERT INTO clients (name, description, designation, image_path) VALUES (%s, %s, %s, %s)", 
                 (request.form['name'], request.form['desc'], request.form['designation'], img_path))
@@ -71,19 +89,17 @@ def add_client():
 
 @app.route('/submit_contact', methods=['POST'])
 def submit_contact():
-    conn = mysql.get_conn() # Fixed: Use get_conn()
+    conn = mysql.get_conn()
     cur = conn.cursor()
-    cur.execute(
-        "INSERT INTO contact_submissions (name, email, phone, city) VALUES (%s, %s, %s, %s)",
-        (request.form['name'], request.form['email'], request.form['phone'], request.form['city'])
-    )
+    cur.execute("INSERT INTO contact_submissions (name, email, phone, city) VALUES (%s, %s, %s, %s)",
+        (request.form['name'], request.form['email'], request.form['phone'], request.form['city']))
     conn.close()
     flash("Request sent successfully!")
     return redirect(url_for('index'))
 
 @app.route('/subscribe', methods=['POST'])
 def subscribe():
-    conn = mysql.get_conn() # Fixed: Use get_conn()
+    conn = mysql.get_conn()
     cur = conn.cursor()
     try:
         cur.execute("INSERT INTO subscribers (email) VALUES (%s)", (request.form['email'],))
@@ -91,21 +107,6 @@ def subscribe():
         pass
     conn.close()
     return redirect(url_for('index'))
-
-@app.route('/')
-def index():
-    conn = mysql.get_conn() # Fixed: Use get_conn()
-    cur = conn.cursor()
-    cur.execute("SELECT * FROM projects")
-    projects = cur.fetchall()
-    cur.execute("SELECT * FROM clients")
-    clients = cur.fetchall()
-    cur.close()
-    conn.close()
-    return render_template('index.html', projects=projects, clients=clients)
-
-# Important for Vercel deployment
-app = app 
 
 if __name__ == '__main__':
     app.run(debug=True)
