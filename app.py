@@ -95,40 +95,68 @@ def admin():
 
 @app.route('/admin/add_project', methods=['POST'])
 def add_project():
-    name = request.form.get('project_name')
-    desc = request.form.get('project_desc')
-    file = request.files.get('project_image') # Matches admin.html
-    
-    img_data = get_base64_image(file)
-    if not img_data:
-        img_data = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=450"
+    try:
+        name = request.form.get('project_name')
+        desc = request.form.get('project_desc')
+        file = request.files.get('project_image')
+        
+        # 1. Convert to Base64
+        img_data = get_base64_image(file)
+        
+        if not img_data:
+            img_data = "https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=450"
 
-    conn = mysql.get_conn()
-    cur = conn.cursor()
-    cur.execute("INSERT INTO projects (name, description, image_path) VALUES (%s, %s, %s)", 
-                (name, desc, img_data))
-    conn.close()
-    flash("Project added successfully!")
-    return redirect(url_for('admin'))
+        # 2. Database Connection
+        conn = mysql.get_conn()
+        cur = conn.cursor()
+        
+        # 3. Insert
+        cur.execute("INSERT INTO projects (name, description, image_path) VALUES (%s, %s, %s)", 
+                    (name, desc, img_data))
+        conn.close()
+        
+        flash("Project added successfully!")
+        return redirect(url_for('admin'))
+        
+    except Exception as e:
+        # This prints the REAL error to the Vercel logs
+        print(f"CRITICAL ERROR: {str(e)}")
+        return f"Database Error: {str(e)}", 500
 
 @app.route('/admin/add_client', methods=['POST'])
 def add_client():
-    name = request.form.get('client_name')
-    desc = request.form.get('client_desc')
-    designation = request.form.get('client_designation')
-    file = request.files.get('client_image') # Matches admin.html
-    
-    img_data = get_base64_image(file)
-    if not img_data:
-        img_data = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80"
+    try:
+        name = request.form.get('client_name')
+        desc = request.form.get('client_desc')
+        designation = request.form.get('client_designation')
+        
+        # 1. Capture the file
+        file = request.files.get('client_image') 
+        
+        # 2. Convert to Base64
+        img_data = get_base64_image(file)
+        
+        # Fallback if upload fails
+        if not img_data:
+            img_data = "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=80"
 
-    conn = mysql.get_conn()
-    cur = conn.cursor()
-    cur.execute("INSERT INTO clients (name, description, designation, image_path) VALUES (%s, %s, %s, %s)", 
-                (name, desc, designation, img_data))
-    conn.close()
-    flash("Client added successfully!")
-    return redirect(url_for('admin'))
+        # 3. Database operation
+        conn = mysql.get_conn()
+        cur = conn.cursor()
+        
+        cur.execute(
+            "INSERT INTO clients (name, description, designation, image_path) VALUES (%s, %s, %s, %s)", 
+            (name, desc, designation, img_data)
+        )
+        conn.close()
+        
+        flash("Client testimonial added successfully!")
+        return redirect(url_for('admin'))
+
+    except Exception as e:
+        # This will show up in your Vercel Logs
+        print(f"CLIENT UPLOAD ERROR: {str(e)}")
+        return f"Database Error: {str(e)}", 500
 
 @app.route('/submit_contact', methods=['POST'])
 def submit_contact():
